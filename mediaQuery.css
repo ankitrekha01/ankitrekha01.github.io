@@ -1,0 +1,152 @@
+@media (max-width:600px) {
+    #main{
+        height: 110vh;
+    }
+    #name {
+        top: 0vh;
+        left: 2vw;
+        padding: 0;
+        margin: 0;
+        font-size: 20px;
+    }
+
+    #odometer {
+        font-size: 25px;
+        top: 5vh;
+        left: 2vw;
+    }
+
+    #situation {
+        margin: 0;
+        padding: 0;
+        top: 11vh;
+        left: 2vw;
+        font-size: 15px;
+    }
+
+    #tested {
+        font-size: 12px;
+        top: 0;
+        right: 1vw;
+    }
+
+    #tested_number {
+        font-size: 12px;
+    }
+
+    #testedSource {
+        margin-left: 38px;
+    }
+
+    #sampleRep {
+        font-size: 12px;
+        top: 0;
+        right: 30vw;
+    }
+
+    #sampleNumber {
+        font-size: 12px;
+    }
+
+    #sampleSource {
+        margin-left: 22px;
+    }
+
+    #apiUpdated {
+        font-size: 12px;
+        top: 12vh;
+        right: 1vw;
+    }
+
+    #container {
+        top: 18vh;
+        height: 20vh;
+        left: 0;
+        width: 100vw;
+    }
+
+    #container div {
+        width: 25vw;
+        height: 20vh;
+    }
+
+    #contHover {
+        position: absolute;
+        margin: 0;
+        padding: 0;
+        width: 25vw;
+        height: 20vh;
+        top: 18vh;
+        left: 0;
+    }
+
+    .contHeading {
+        margin-top: -20px;
+        font-size: 15px;
+    }
+
+    .previousDayNum {
+        font-size: 12px;
+    }
+
+    .contNumber {
+        font-size: 15px;
+    }
+
+    #info {
+        margin: 0;
+        padding: 0;
+        height: 10vh;
+        width: 100%;
+        top: 110%;
+        left: 0;
+        row-gap: 0px;
+        grid-template-rows: 35% 65%;
+    }
+
+    #info-info {
+        display: grid;
+        grid-template-columns: 20% 20% 20% 20% 20%;
+        column-gap: 0px;
+    }
+
+    #info-info div {
+        font-size: 12px;
+        justify-content: center;
+        align-items: center;
+        letter-spacing: 0px;
+    }
+
+    #info-state {
+        column-gap: 0px;
+        row-gap: 0px;
+    }
+
+    .info-state-name {
+        font-size: 12px;
+    }
+
+    #zero {
+        font-size: 12px;
+    }
+
+    #replica {
+        top: calc(110% + 24px);
+        height: calc(10vh / 1.54);
+        left: 0%;
+        width: calc(100% / 5);
+    }
+
+    #activeGraph,
+    #confGraph,
+    #recGraph,
+    #deGraph {
+        top: 0;
+        left: 0;
+        height: 0;
+        stroke-width: 0;
+        width: 0;
+        opacity: 0;
+    }
+
+}

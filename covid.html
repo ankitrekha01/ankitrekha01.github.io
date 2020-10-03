@@ -1,0 +1,430 @@
+<!--Odometer.js, animate.css, d3.js ; Font-style= Merienda,Acme,Carter One ; Total API=4 -->
+
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="covid.css" />
+    <link rel="stylesheet" href="mediaQuery.css" />
+    <script src='https://d3js.org/topojson.v2.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.2/d3.min.js'></script>
+    <script src='https://d3js.org/d3-selection-multi.v1.min.js'></script>
+    <!--For multiple styles-->
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/odometer@0.4.8/themes/odometer-theme-default.css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/countup.js/1.8.2/countUp.min.js"></script>
+
+
+    <link href="https://fonts.googleapis.com/css2?family=Merienda+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Acme&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Carter+One&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <script src="./hoverContainer.js"></script>
+    <script src='./previousDay.js'></script>
+    <script src="./info.js"></script>
+</head>
+
+<body>
+    <script>
+        var pos = "6%"
+        var extra = 10;
+        /*This is to change the format into lakhs for odomter class*/
+        window.odometerOptions = {
+            format: '(,dd,ddd)', // Change how digit groups are formatted, and how many digits are shown after the decimal point
+        };
+
+
+        /*Main part where map resides*/
+        var svg = d3.select("body")
+            .append('svg')
+            .attr("id", "main");
+
+        var svgActiveGraph = d3.select('body')
+            .append('svg')
+            .attr("id", 'activeGraph');
+        var activeData = [
+            [0, 50],
+            [10, 70],
+            [40, 80],
+            [50, 140],
+            [60, 40],
+            [70, 80],
+            [80, 90],
+            [90, 160],
+            [100, 95],
+            [110, 80],
+            [120, 90],
+            [130, 70],
+            [140, 100]
+        ];
+        svgActiveGraph.append("path")
+            .datum(activeData)
+            .attr('d', d3.line()
+                .curve(d3.curveBasis)
+                .x((d) => d[0])
+                .y((d) => d[1]));
+
+        var svgConfGraph = d3.select("body")
+            .append('svg')
+            .attr('id', 'confGraph');
+
+        var confData = [
+            [0, 30],
+            [10, 35],
+            [30, 50],
+            [40, 40],
+            [50, 40],
+            [80, 55],
+            [100, 45],
+            [120, 40],
+            [130, 50],
+            [140, 30]
+        ];
+        svgConfGraph.append('path')
+            .datum(confData)
+            .attr('d', d3.line()
+                .curve(d3.curveBasis)
+                .x((d) => d[0])
+                .y((d) => d[1]));
+
+        var svgRecGraph = d3.select("body")
+            .append('svg')
+            .attr('id', 'recGraph');
+
+        var recData = [
+            [0, 40],
+            [10, 55],
+            [30, 42],
+            [40, 30],
+            [50, 65],
+            [80, 50],
+            [100, 25],
+            [120, 28],
+            [130, 45],
+            [140, 40]
+        ];
+        svgRecGraph.append('path')
+            .datum(recData)
+            .attr('d', d3.line()
+                .curve(d3.curveBasis)
+                .x((d) => d[0])
+                .y((d) => d[1]));
+
+
+        var svgDeGraph = d3.select("body")
+            .append('svg')
+            .attr('id', 'deGraph');
+
+        var deData = [
+            [0, 40],
+            [10, 50],
+            [30, 45],
+            [40, 40],
+            [50, 41],
+            [80, 57],
+            [100, 35],
+            [120, 44],
+            [130, 45],
+            [140, 40]
+        ];
+        svgDeGraph.append('path')
+            .datum(deData)
+            .attr('d', d3.line()
+                .curve(d3.curveBasis)
+                .x((d) => d[0])
+                .y((d) => d[1]));
+
+
+        var tooltip = d3.select("body")
+            .append("div")
+            .attr("id", "tooltip");
+
+        var showcase = d3.select("body")
+            .append("div")
+            .attr("id", "odometer")
+            .attr("class", "odometer");
+
+        /*Covid data of tested everyday*/
+        fetch("https://api.covid19india.org/data.json")
+            .then(res => res.json())
+            .then((data) => {
+                document.getElementById("tested_number").innerHTML = parseInt(data.tested[data.tested.length - 1]
+                    .totalsamplestested).toLocaleString('en-IN');
+                document.getElementById("sampleNumber").innerHTML = parseInt(data.tested[data.tested.length - 1]
+                    .samplereportedtoday).toLocaleString('en-IN');
+
+                var date = data.tested[data.tested.length - 1].testedasof;
+                var datearray = date.split("/");
+
+                var newdate = datearray[1] + '/' + datearray[0] + '/' + datearray[2];
+
+                document.getElementById("tested_date").innerHTML = "As of " + new Date(newdate).toDateString()
+                    .slice(4, 10) + " per";
+                document.getElementById("testedSource").href = data.tested[data.tested.length - 1].source;
+
+                document.getElementById("sampleDate").innerHTML = "on " + new Date(newdate).toDateString().slice(4,
+                    10) + " as per";
+                document.getElementById("sampleSource").href = data.tested[data.tested.length - 1].source;
+            })
+
+        /*This is to make the map big,move etc..*/
+        var projection = d3.geoAlbers()
+            .translate([-1100, 1300])
+            .rotate([9, 58])
+            .parallels([20, 55])
+            .scale([1600]);
+
+
+        /*Main part to make the map*/
+        var path = d3.geoPath()
+            .projection(projection);
+
+
+        var stateMap = "state.json";
+        var covidInfo = "https://api.rootnet.in/covid19-in/stats/latest";
+
+
+        /*To work with two APIs*/
+        d3.queue()
+            .defer(d3.json, stateMap)
+            .defer(d3.json, covidInfo)
+            .await(ready);
+
+        function ready(err, state, covid) {
+            if (err) console.log(err)
+            var unoffical_summary = covid.data["unofficial-summary"][0];
+            /*this is the starting value of cases in india*/
+            showcase.html(parseInt(covid.data["unofficial-summary"][0].total).toLocaleString('en-IN'));
+
+            /*Updating the date and time at right top*/
+            var dateCovid = new Date(covid.lastRefreshed);
+            document.getElementById("apiUpdated").innerHTML = "Last Updated on " + dateCovid.toString().slice(3, 10) +
+                ", " + dateCovid.toLocaleTimeString().slice(0, 4) + dateCovid.toLocaleTimeString().slice(7) +
+                " IST";
+
+
+            /*Data in the container*/
+            document.getElementsByClassName('contNumber')[0].innerHTML = unoffical_summary.total.toLocaleString(
+                'en-IN');
+            document.getElementsByClassName('contNumber')[1].innerHTML = unoffical_summary.active.toLocaleString(
+                'en-IN');
+            document.getElementsByClassName('contNumber')[2].innerHTML = unoffical_summary.recovered.toLocaleString(
+                'en-IN');
+            document.getElementsByClassName('contNumber')[3].innerHTML = unoffical_summary.deaths.toLocaleString(
+                'en-IN');
+
+
+            svg.append("g")
+                .selectAll("path")
+                .data(topojson.feature(state, state.objects.show).features)
+                .enter()
+                .append("path")
+                .attr("class", "colorMap")
+                .attr("Name", (d) => d.properties.states)
+                .attr("d", path)
+                .on("mouseover", (d) => {
+                    tooltip.styles({
+                        'position': 'absolute',
+                        'top': event.screenY + "px",
+                        'left': event.screenX + "px",
+                        "visibility": "hidden"
+                    });
+                    covid.data.regional.forEach(element => {
+                        if (d.properties.states == element.loc) {
+                            var indvActive = element.totalConfirmed - element.discharged - element.deaths
+                            setTimeout(function () {
+                                if (document.getElementById("situation").innerHTML == "Confirmed" &&
+                                    document.getElementById("name").innerHTML !== "India") {
+                                    document.getElementsByClassName('odometer')[0].innerHTML =
+                                        element.totalConfirmed;
+                                } else if (document.getElementById("situation").innerHTML ==
+                                    "Recovered" && document.getElementById("name").innerHTML !==
+                                    "India") {
+                                    document.getElementsByClassName('odometer')[0].innerHTML =
+                                        element.discharged;
+                                } else if (document.getElementById("situation").innerHTML ==
+                                    "Deaths" && document.getElementById("name").innerHTML !==
+                                    "India") {
+                                    document.getElementsByClassName('odometer')[0].innerHTML =
+                                        element.deaths;
+                                } else if (document.getElementById("situation").innerHTML ==
+                                    "Active" && document.getElementById("name").innerHTML !==
+                                    "India") {
+                                    document.getElementsByClassName('odometer')[0].innerHTML =
+                                        indvActive;
+                                }
+                            }, 1);
+                            document.getElementById("name").innerHTML = element.loc
+                            var infoStateName = document.getElementsByClassName('info-state-name')
+                            infoStateName[0].innerHTML = element.loc;
+
+                            /*CountJs*/
+                            var end1 = element.totalConfirmed;
+                            var countUp1 = new CountUp('first', 100000, end1, 0, 1);
+                            countUp1.start();
+
+                            var end2 = element.totalConfirmed - element.discharged - element.deaths;
+                            var countUp2 = new CountUp('second', 10000, end2, 0, 1);
+                            countUp2.start();
+                            var end3 = element.discharged;
+                            var countUp3 = new CountUp('third', 90000, end3, 0, 1);
+                            countUp3.start();
+                            var end4 = element.deaths;
+                            var countUp4 = new CountUp('four', 1000, end4, 0, 1);
+                            countUp4.start();
+                            var end5 = ((element.totalConfirmed / unoffical_summary.total) * 100).toFixed(
+                                1);
+                            var options1 = {
+                                suffix: "%"
+                            }
+                            var countUp5 = new CountUp('five', 15, end5, 1, 1, options1);
+                            countUp5.start();
+                            var end6 = (((element.totalConfirmed - element.discharged - element.deaths) /
+                                element.totalConfirmed) * 100).toFixed(1);
+                            var options2 = {
+                                suffix: "%"
+                            }
+                            var countUp6 = new CountUp('six', 20, end6, 1, 1, options2);
+                            countUp6.start();
+                            var end7 = (element.discharged / element.totalConfirmed * 100).toFixed(1)
+                            var options3 = {
+                                suffix: "%"
+                            }
+                            var countUp7 = new CountUp('seven', 80, end7, 1, 1, options3);
+                            countUp7.start();
+                            var end8 = (element.deaths / element.totalConfirmed * 100).toFixed(1);
+                            var options4 = {
+                                suffix: "%"
+                            }
+                            var countUp8 = new CountUp('eight', 5, end8, 1, 1, options4);
+                            countUp8.start();
+
+                            /*So, that animation starts again*/
+                            document.getElementsByClassName("info-state")[0].classList.remove(
+                                "animate__jackInTheBox");
+                            document.getElementsByClassName("info-state-name")[0].offsetWidth;
+                            document.getElementsByClassName("info-state-name")[0].classList.add(
+                                "animate__jackInTheBox");
+                        }
+                    });
+                })
+
+                .on('mouseout', (d) => {
+                    tooltip.styles({
+                        "visibility": "hidden"
+                    })
+                });
+        }
+        
+        d3.select(window).on('resize', resize);
+
+        function resize() {
+
+            // update projection
+            projection
+                .translate([-760,755])
+                .rotate([9, 58])
+                .parallels([20, 55])
+                .scale([600]);
+
+
+            d3.selectAll("path").attr('d', path)
+        }
+
+        function myFunction(x) {
+            if (x.matches) { // If media query matches
+                resize();
+                pos = "0";
+                extra = 25
+            }
+        }
+
+        var x = window.matchMedia("(max-width: 600px)")
+        myFunction(x) // Call listener function at run time
+        x.addListener(myFunction)
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/odometer@0.4.8/odometer.min.js"></script>
+
+
+    <!--                   top-left                           -->
+    <h2 id='name' class="animate__animated animate__lightSpeedInRight">India</h2>
+    <h6 id='situation'>Confirmed</h6>
+
+    <!--                   Total Tested(top-middle)                           -->
+    <div id='tested' class="animate__animated animate__lightSpeedInLeft">
+        <span>Tested</span>
+        <span id='tested_number'></span>
+        <span id='tested_date'></span>
+        <a id="testedSource" href='' target="_blank">source</a>
+    </div>
+
+    <!--                   Sample Reported(top-middle)                           -->
+    <div id="sampleRep" class="animate__animated animate__lightSpeedInLeft">
+        <span>Sample Reported</span>
+        <span id="sampleNumber"></span>
+        <span id='sampleDate'></span>
+        <a id="sampleSource" href='' target="_blank">source</a>
+    </div>
+
+    <!--                   Right-Top(API update)                           -->
+    <div id="apiUpdated" class="animate__animated animate__lightSpeedInLeft"></div>
+
+    <div id='container'>
+        <!--                   Confirmed                            -->
+        <div id='contConfirmed' class='contConfirmed'>
+            <br><br><span class='contHeading'>Confirmed</span>
+            <br><br><span class="previousDayNum"></span>
+            <br><span class="contNumber"></span>
+        </div>
+        <!--                   Active                               -->
+        <div id="contActive" class='contActive'>
+            <br><br><span class='contHeading'>Active</span>
+            <br><br><span class='previousDayNum'></span><br>
+            <br><span class="contNumber"></span>
+        </div>
+        <!--                   Recovered                            -->
+        <div id="contRecov" class="contRecov">
+            <br><br><span class='contHeading'>Recovered</span>
+            <br><br><span class='previousDayNum'></span>
+            <br><span class="contNumber"></span>
+        </div>
+        <!--                   Deaths                               -->
+        <div id="contDeath" class="contDeath">
+            <br><br><span class='contHeading'>Deaths</span>
+            <br><br><span class='previousDayNum'></span>
+            <br><span class="contNumber"></span>
+        </div>
+    </div>
+
+    <!--                   Hover Bar(left-middle)                            -->
+    <div id='contHover' class='contHover'></div>
+
+    <!--                   Info(left-bottom)                            -->
+    <div id='info'>
+        <div id='info-info'>
+            <div>State/UT</div>
+            <div>Confirmed</div>
+            <div>Active</div>
+            <div>Recovered</div>
+            <div>Deceased</div>
+        </div>
+        <div id='info-state'>
+            <div id='zero' class="info-state info-state-name animate__animated animate__jackInTheBox">Maharashtra</div>
+            <div class="info-state-name" id='first'></div>
+            <div class="info-state-name" id='second'></div>
+            <div class="info-state-name" id='third'></div>
+            <div class="info-state-name" id='four'></div>
+            <div class="info-state-name" id='five'></div>
+            <div class="info-state-name" id='six'></div>
+            <div class="info-state-name" id='seven'></div>
+            <div class="info-state-name" id='eight'></div>
+        </div>
+    </div>
+    <div id='replica'></div>
+
+</body>
+
+</html>
