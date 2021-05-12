@@ -194,9 +194,9 @@
 
         function ready(err, state, covid) {
             if (err) console.log(err)
-            var unoffical_summary = covid.data["unofficial-summary"][0];
+            var unoffical_summary = covid.data["summary"];
             /*this is the starting value of cases in india*/
-            showcase.html(parseInt(covid.data["unofficial-summary"][0].total).toLocaleString('en-IN'));
+            showcase.html(parseInt(covid.data["summary"].total).toLocaleString('en-IN'));
 
             /*Updating the date and time at right top*/
             var dateCovid = new Date(covid.lastRefreshed);
@@ -204,13 +204,12 @@
                 ", " + dateCovid.toLocaleTimeString().slice(0, 4) + dateCovid.toLocaleTimeString().slice(7) +
                 " IST";
 
-
+            var activeCases = (unoffical_summary.total-unoffical_summary.discharged-unoffical_summary.deaths).toLocaleString('en-IN')
             /*Data in the container*/
             document.getElementsByClassName('contNumber')[0].innerHTML = unoffical_summary.total.toLocaleString(
                 'en-IN');
-            document.getElementsByClassName('contNumber')[1].innerHTML = unoffical_summary.active.toLocaleString(
-                'en-IN');
-            document.getElementsByClassName('contNumber')[2].innerHTML = unoffical_summary.recovered.toLocaleString(
+            document.getElementsByClassName('contNumber')[1].innerHTML = activeCases;
+            document.getElementsByClassName('contNumber')[2].innerHTML = unoffical_summary.discharged.toLocaleString(
                 'en-IN');
             document.getElementsByClassName('contNumber')[3].innerHTML = unoffical_summary.deaths.toLocaleString(
                 'en-IN');
