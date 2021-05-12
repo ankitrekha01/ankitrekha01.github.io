@@ -1,7 +1,7 @@
 fetch("https://api.rootnet.in/covid19-in/stats/latest")
     .then(res => res.json())
     .then((data) => {
-        var unoffical_summary = data.data["unofficial-summary"][0]
+        var unoffical_summary = data.data["summary"]
         data.data.regional.forEach(element => {
             if (element.loc == document.getElementsByClassName('info-state')[0].innerHTML) {
                 var infoStateName = document.getElementsByClassName('info-state-name')
