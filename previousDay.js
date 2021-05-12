@@ -16,7 +16,7 @@ fetch("https://api.covid19india.org/states_daily.json")
         var lastDayActive = Math.abs(lastDayConfirmed-lastDayRec-lastDayDeath);
 
         /*Data in the container*/
-        document.getElementsByClassName('previousDayNum')[0].innerHTML = "+"+ lastDayConfirmed.toLocaleString('en-IN');
-        document.getElementsByClassName('previousDayNum')[2].innerHTML = "+"+ lastDayRec.toLocaleString('en-IN');
-        document.getElementsByClassName('previousDayNum')[3].innerHTML = "+"+ lastDayDeath.toLocaleString('en-IN');
+        document.getElementsByClassName('previousDayNum')[0].innerHTML = "+"+ parseInt(lastDayConfirmed).toLocaleString('en-IN');
+        document.getElementsByClassName('previousDayNum')[2].innerHTML = "+"+ parseInt(lastDayRec).toLocaleString('en-IN');
+        document.getElementsByClassName('previousDayNum')[3].innerHTML = "+"+ parseInt(lastDayDeath).toLocaleString('en-IN');
     })
